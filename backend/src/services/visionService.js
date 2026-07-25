@@ -1,48 +1,44 @@
 import axios from 'axios';
 
-export async function classifyImageWithVision(imageBuffer) {
-  const base64Image = imageBuffer.toString('base64');
-
+export async function classifyImageWithHuggingFace(imageBuffer) {
   try {
     const response = await axios.post(
-      `https://vision.googleapis.com/v1/images:annotate?key=${process.env.GOOGLE_VISION_API_KEY}`,
+  'https://router.huggingface.co/hf-inference/models/microsoft/resnet-50',
+      imageBuffer,
       {
-        requests: [
-          {
-            image: { content: base64Image },
-            features: [{ type: 'LABEL_DETECTION', maxResults: 10 }],
-          },
-        ],
+        headers: {
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          'Content-Type': 'application/octet-stream',
+        },
       }
     );
 
-    const labels = response.data.responses[0]?.labelAnnotations || [];
+    const predictions = response.data;
 
-    // Simple keyword-based mapping from Vision's labels to your categories
     const categoryMap = {
-      pothole: ['pothole', 'road', 'asphalt', 'crack'],
-      garbage: ['garbage', 'trash', 'waste', 'litter', 'rubbish'],
-      streetlight: ['streetlight', 'lamp', 'light fixture', 'pole'],
-      water_leakage: ['water', 'leak', 'puddle', 'flood'],
-      graffiti: ['graffiti', 'vandalism', 'spray paint'],
+      pothole: ['pothole', 'road', 'asphalt', 'crack', 'manhole'],
+      garbage: ['garbage', 'trash', 'ashcan', 'waste', 'bin', 'dump'],
+      streetlight: ['streetlight', 'lamp', 'lantern', 'pole'],
+      water_leakage: ['water', 'fountain', 'puddle'],
+      graffiti: ['graffiti', 'wall'],
     };
 
     let bestCategory = 'other';
     let bestConfidence = 0;
 
-    for (const label of labels) {
-      const desc = label.description.toLowerCase();
+    for (const pred of predictions) {
+      const desc = pred.label.toLowerCase();
       for (const [category, keywords] of Object.entries(categoryMap)) {
-        if (keywords.some((kw) => desc.includes(kw)) && label.score > bestConfidence) {
+        if (keywords.some((kw) => desc.includes(kw)) && pred.score > bestConfidence) {
           bestCategory = category;
-          bestConfidence = label.score;
+          bestConfidence = pred.score;
         }
       }
     }
 
     return { category: bestCategory, confidence: bestConfidence };
   } catch (error) {
-    console.error('Vision classification error:', error.response?.data || error.message);
+    console.error('Hugging Face classification error:', error.response?.data || error.message);
     return { category: null, confidence: null };
   }
 }

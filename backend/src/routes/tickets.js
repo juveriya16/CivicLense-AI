@@ -1,7 +1,7 @@
 import express from 'express';
 import upload from '../middleware/upload.js';
 import { supabaseAdmin } from '../config/supabaseAdmin.js';
-import { classifyImageWithVision } from '../services/visionService.js';
+import { classifyImageWithHuggingFace } from '../services/visionService.js';
 const router = express.Router();
 
 router.post('/', upload.single('media'), async (req, res) => {
@@ -43,7 +43,7 @@ let category = null;
     let ai_confidence = null;
 
    if (req.file && mediaType === 'image') {
-      const result = await classifyImageWithVision(req.file.buffer);
+      const result = await classifyImageWithHuggingFace(req.file.buffer);
       category = result.category;
       ai_confidence = result.confidence;
     }
