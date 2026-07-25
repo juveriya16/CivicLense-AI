@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CivicLens - Google Login Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="font-family: sans-serif; padding: 40px;">
+  <h2>CivicLens Backend Auth Test</h2>
+  <button id="loginBtn" style="padding: 10px 20px; font-size: 16px;">Sign in with Google</button>
+  <pre id="output" style="margin-top: 20px; background: #f4f4f4; padding: 15px; white-space: pre-wrap;"></pre>
+
+  <script>
+  const supabaseUrl = 'https://anundqtuxkxbuhitclwq.supabase.co';
+  const supabaseKey = 'sb_publishable_TzkaXHcA9nhiE2sOu4Ybxw_hV2uvDM-';
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
+    });
+  });
+
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      document.getElementById('output').textContent = 
+        'Logged in!\n\nEmail: ' + session.user.email + 
+        '\n\nAccess Token:\n' + session.access_token;
+    }
+  });
+
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      document.getElementById('output').textContent = 
+        'Logged in!\n\nEmail: ' + session.user.email + 
+        '\n\nAccess Token:\n' + session.access_token;
+    }
+  });
+</script>
+</body>
+</html>

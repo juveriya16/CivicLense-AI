@@ -43,7 +43,6 @@ router.post('/verify', async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 
-  // Mark profile as verified
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
     .update({ is_verified: true })
@@ -55,5 +54,4 @@ router.post('/verify', async (req, res) => {
 
   res.status(200).json({ message: 'OTP verified successfully.', user: data.user });
 });
-
 export default router;
