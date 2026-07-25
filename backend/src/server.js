@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import authRoutes from './routes/auth.js';
 import googleAuthRoutes from './routes/googleAuth.js';
 import otpRoutes from './routes/otp.js';
+import ticketRoutes from './routes/tickets.js';
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(express.json());
 app.use('/api/auth/google', googleAuthRoutes);
 app.use('/api/auth/otp', otpRoutes);
+app.use('/api/tickets', ticketRoutes);
 // Routes will go here
 // app.use('/api/tickets', ticketRoutes);
 
