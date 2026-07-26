@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CivicLens — Citizen Module (Frontend)
 
 Smart Civic Issue Reporting & Management System — Citizen-facing frontend, built to a premium SaaS
@@ -94,3 +95,6 @@ Every page currently reads from `src/mock/*.js`. To connect a real API:
 - **Camera** uses `getUserMedia` with a live preview and front/back camera switching
   (`src/components/common/CameraCapture.jsx`) instead of relying on the file input's `capture`
   attribute, which desktop browsers ignore.
+=======
+"# CivicLense-AI" 
+>>>>>>> b939aa26044a69606ba23a61d641557bd49ffc7b
