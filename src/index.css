@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ---- Color tokens ---- */
+  --color-navy-950: #070c17;
+  --color-navy-900: #0b1220;
+  --color-navy-850: #101a2e;
+  --color-navy-800: #16233f;
+  --color-navy-700: #1f2f52;
+  --color-navy-600: #2c4270;
+  --color-navy-500: #3a5490;
+  --color-navy-300: #a9b8d6;
+  --color-navy-100: #e4e9f5;
+  --color-navy-50:  #eef1fa;
+
+  --color-orange-50:  #fff3ec;
+  --color-orange-100: #ffe1d0;
+  --color-orange-300: #ffab7a;
+  --color-orange-500: #ff6b2c;
+  --color-orange-600: #f2551a;
+  --color-orange-700: #c9430f;
+
+  --color-surface: #f6f7fb;
+  --color-surface-alt: #eef1f8;
+  --color-card: #ffffff;
+  --color-ink: #10192e;
+  --color-ink-soft: #4b5670;
+  --color-line: #e4e8f1;
+
+  --color-success: #1e9e6b;
+  --color-warning: #e0a72b;
+  --color-danger: #e0472f;
+
+  /* ---- Type ---- */
+  --font-display: "Bebas Neue", "Inter", sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --shadow-glass: 0 1px 1px rgba(16,25,46,0.03), 0 8px 24px -4px rgba(16,25,46,0.10), 0 2px 6px -1px rgba(16,25,46,0.06);
+  --shadow-glass-lg: 0 2px 2px rgba(16,25,46,0.04), 0 24px 48px -12px rgba(16,25,46,0.18), 0 4px 12px -2px rgba(16,25,46,0.08);
+  --shadow-glow-orange: 0 8px 30px -6px rgba(255,107,44,0.45);
+}
+
+@layer base {
+  * { @apply border-line; }
+  html { scroll-behavior: smooth; }
+
+  /* Dark mode: redefining the same tokens flips every component that
+     uses bg-surface / bg-surface-alt / bg-card / text-ink / border-line,
+     since Tailwind v4 utilities reference these as CSS variables. */
+  .dark {
+    --color-surface: #070c17;
+    --color-surface-alt: #131f38;
+    --color-card: #101a2e;
+    --color-ink: #f4f6fb;
+    --color-ink-soft: #93a0bf;
+    --color-line: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  h1,h2,h3,.font-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+
+  ::selection { background: var(--color-orange-300); color: var(--color-navy-950); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-orange-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Glass surface used across cards/panels */
+  .glass {
+    @apply backdrop-blur-xl border;
+    background: color-mix(in srgb, var(--color-card) 70%, transparent);
+    border-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
+    box-shadow: var(--shadow-glass);
+  }
+  .glass-dark {
+    @apply bg-navy-900/60 backdrop-blur-xl border border-white/10;
+  }
+  .card {
+    @apply rounded-3xl border border-line;
+    background: var(--color-card);
+    box-shadow: var(--shadow-glass);
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-orange-500 text-white font-semibold px-6 py-3 transition-all;
+    box-shadow: var(--shadow-glow-orange);
+  }
+  .btn-primary:hover { @apply bg-orange-600 -translate-y-0.5; }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 text-white font-semibold px-6 py-3 transition-all hover:bg-navy-800 hover:-translate-y-0.5;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full text-ink font-semibold px-6 py-3 border border-line transition-all hover:border-navy-300 hover:-translate-y-0.5;
+    background: var(--color-card);
+  }
+  .input-field {
+    @apply w-full rounded-2xl border border-line px-4 py-3 text-sm text-ink placeholder:text-ink-soft/60 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10;
+    background: var(--color-card);
+  }
+  .label {
+    @apply text-xs font-semibold uppercase tracking-wider text-ink-soft;
+  }
+
+  /* Viewfinder corner-bracket motif — the CivicLens signature */
+  .viewfinder {
+    position: relative;
+  }
+  .viewfinder::before, .viewfinder::after,
+  .viewfinder > .vf-tl, .viewfinder > .vf-br {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--color-orange-500);
+    pointer-events: none;
+  }
+  .viewfinder::before {
+    top: -2px; left: -2px;
+    border-top: 3px solid var(--color-orange-500);
+    border-left: 3px solid var(--color-orange-500);
+    border-radius: 10px 0 0 0;
+  }
+  .viewfinder::after {
+    bottom: -2px; right: -2px;
+    border-bottom: 3px solid var(--color-orange-500);
+    border-right: 3px solid var(--color-orange-500);
+    border-radius: 0 0 10px 0;
+  }
+
+  .status-dot {
+    @apply relative inline-flex h-2.5 w-2.5 rounded-full;
+  }
+  .status-dot::after {
+    content: "";
+    @apply absolute inset-0 rounded-full;
+    animation: pulse-ring 2s cubic-bezier(0.4,0,0.6,1) infinite;
+    background: inherit;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  .bg-noise {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+}
